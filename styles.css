@@ -1,0 +1,496 @@
+/* Import Google Fonts for sci-fi aesthetic */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap');
+
+/* CSS Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Exo 2', sans-serif;
+    background: linear-gradient(135deg, #0a0a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #00ffff;
+    overflow: hidden;
+    user-select: none;
+}
+
+/* Animated star field background */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, #ffffff, transparent),
+        radial-gradient(2px 2px at 40px 70px, #00ffff, transparent),
+        radial-gradient(1px 1px at 90px 40px, #ffffff, transparent),
+        radial-gradient(1px 1px at 130px 80px, #00ffff, transparent),
+        radial-gradient(2px 2px at 160px 30px, #ffffff, transparent);
+    background-repeat: repeat;
+    background-size: 200px 100px;
+    animation: starfield 20s linear infinite;
+    z-index: -1;
+}
+
+@keyframes starfield {
+    from { transform: translateY(-100px); }
+    to { transform: translateY(100px); }
+}
+
+/* Game Container */
+#gameContainer {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    margin: 20px auto;
+    border: 3px solid #00ffff;
+    border-radius: 10px;
+    background: rgba(0, 0, 50, 0.8);
+    box-shadow: 
+        0 0 20px #00ffff,
+        inset 0 0 20px rgba(0, 255, 255, 0.1);
+}
+
+/* Game Canvas */
+#gameCanvas {
+    display: block;
+    background: linear-gradient(180deg, #001122 0%, #000033 100%);
+    border-radius: 7px;
+}
+
+/* Game UI Overlay */
+#gameUI {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.ui-top {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: linear-gradient(180deg, rgba(0, 255, 255, 0.2) 0%, transparent 100%);
+}
+
+.stat-group {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    text-shadow: 0 0 10px #00ffff;
+}
+
+.label {
+    color: #00aaff;
+    margin-right: 5px;
+}
+
+/* Health Bar */
+.health-container {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+    width: 200px;
+}
+
+.health-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: #00ffff;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px #00ffff;
+}
+
+.health-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255, 0, 0, 0.3);
+    border: 2px solid #ff0066;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.health-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #ff0066 0%, #ff3399 50%, #ff0066 100%);
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px #ff0066;
+}
+
+/* Weapon Info */
+.weapon-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 200px;
+}
+
+#weaponType {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    color: #00ff00;
+    display: block;
+    margin-bottom: 5px;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+.ammo-bar {
+    width: 100%;
+    height: 15px;
+    background: rgba(0, 255, 0, 0.3);
+    border: 2px solid #00ff00;
+    border-radius: 7px;
+    overflow: hidden;
+}
+
+.ammo-fill {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(90deg, #00ff00 0%, #66ff66 50%, #00ff00 100%);
+    transition: width 0.1s ease;
+    box-shadow: 0 0 5px #00ff00;
+}
+
+/* Screen Overlays */
+.screen-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(5px);
+}
+
+.screen-overlay.hidden {
+    display: none;
+}
+
+.screen-content {
+    text-align: center;
+    padding: 40px;
+    background: linear-gradient(135deg, rgba(0, 50, 100, 0.9) 0%, rgba(0, 20, 40, 0.9) 100%);
+    border: 2px solid #00ffff;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+    max-width: 500px;
+}
+
+/* Game Title */
+.game-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 48px;
+    font-weight: 900;
+    color: #00ffff;
+    text-shadow: 
+        0 0 10px #00ffff,
+        0 0 20px #00ffff,
+        0 0 30px #00ffff;
+    margin-bottom: 10px;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    from { text-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 30px #00ffff; }
+    to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff, 0 0 40px #00ffff; }
+}
+
+.game-subtitle {
+    font-size: 16px;
+    color: #66ccff;
+    margin-bottom: 30px;
+    font-style: italic;
+}
+
+.screen-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 32px;
+    font-weight: 700;
+    color: #00ffff;
+    text-shadow: 0 0 15px #00ffff;
+    margin-bottom: 20px;
+}
+
+/* Controls Info */
+.controls-info {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+    text-align: left;
+}
+
+.controls-info p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+/* Game Buttons */
+.game-button {
+    font-family: 'Orbitron', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    padding: 12px 30px;
+    margin: 10px;
+    background: linear-gradient(135deg, #00ffff 0%, #0099cc 100%);
+    color: #000033;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    box-shadow: 
+        0 4px 15px rgba(0, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    pointer-events: all;
+}
+
+.game-button:hover {
+    background: linear-gradient(135deg, #33ffff 0%, #00ccff 100%);
+    box-shadow: 
+        0 6px 20px rgba(0, 255, 255, 0.5),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.game-button:active {
+    transform: translateY(0);
+    box-shadow: 
+        0 2px 10px rgba(0, 255, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-button.secondary {
+    background: linear-gradient(135deg, #666666 0%, #333333 100%);
+    color: #ffffff;
+    box-shadow: 
+        0 4px 15px rgba(102, 102, 102, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.game-button.secondary:hover {
+    background: linear-gradient(135deg, #888888 0%, #555555 100%);
+}
+
+/* Stats Display */
+.final-stats, .level-stats {
+    background: rgba(0, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    margin: 20px 0;
+}
+
+.final-stats p, .level-stats p {
+    margin: 8px 0;
+    font-size: 16px;
+    font-family: 'Orbitron', monospace;
+}
+
+.high-score {
+    margin-top: 20px;
+    font-family: 'Orbitron', monospace;
+    font-size: 14px;
+    color: #ffff00;
+    text-shadow: 0 0 10px #ffff00;
+}
+
+.new-high-score {
+    color: #ffff00;
+    font-weight: bold;
+    text-shadow: 0 0 15px #ffff00;
+    animation: highScoreFlash 1s ease-in-out infinite alternate;
+}
+
+@keyframes highScoreFlash {
+    from { opacity: 1; }
+    to { opacity: 0.5; }
+}
+
+/* Instructions */
+.instructions {
+    text-align: center;
+    margin-top: 20px;
+    color: #66ccff;
+    font-size: 14px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Level-specific color schemes */
+body.level-2 {
+    background: linear-gradient(135deg, #2e0a0a 0%, #3e1616 50%, #601f0f 100%);
+    color: #ff6600;
+}
+
+body.level-2::before {
+    background-image: 
+        radial-gradient(3px 3px at 30px 20px, #ff6600, transparent),
+        radial-gradient(2px 2px at 60px 60px, #ffaa00, transparent),
+        radial-gradient(1px 1px at 100px 30px, #ff4400, transparent),
+        radial-gradient(4px 4px at 140px 70px, #ff8800, transparent),
+        radial-gradient(2px 2px at 180px 20px, #ffcc00, transparent);
+    animation: asteroidField 15s linear infinite;
+}
+
+@keyframes asteroidField {
+    from { transform: translateY(-120px) rotate(0deg); }
+    to { transform: translateY(120px) rotate(360deg); }
+}
+
+body.level-2 #gameContainer {
+    border-color: #ff6600;
+    box-shadow: 
+        0 0 20px #ff6600,
+        inset 0 0 20px rgba(255, 102, 0, 0.1);
+}
+
+body.level-2 #gameCanvas {
+    background: linear-gradient(180deg, #331100 0%, #441100 100%);
+}
+
+body.level-2 .stat-group {
+    color: #ff6600;
+    text-shadow: 0 0 10px #ff6600;
+}
+
+body.level-2 .label {
+    color: #ffaa00;
+}
+
+body.level-2 .health-bar {
+    border-color: #ff6600;
+}
+
+body.level-2 .health-fill {
+    background: linear-gradient(90deg, #ff6600 0%, #ff9933 50%, #ff6600 100%);
+    box-shadow: 0 0 10px #ff6600;
+}
+
+body.level-2 .ammo-bar {
+    border-color: #ff8800;
+}
+
+body.level-2 .ammo-fill {
+    background: linear-gradient(90deg, #ff8800 0%, #ffaa00 50%, #ff8800 100%);
+    box-shadow: 0 0 5px #ff8800;
+}
+
+body.level-2 #weaponType {
+    color: #ff8800;
+    text-shadow: 0 0 5px #ff8800;
+}
+
+body.level-3 {
+    background: linear-gradient(135deg, #2e0a2e 0%, #3e163e 50%, #600f60 100%);
+    color: #ff00ff;
+}
+
+body.level-3::before {
+    background-image: 
+        radial-gradient(2px 2px at 25px 35px, #ff00ff, transparent),
+        radial-gradient(3px 3px at 55px 65px, #00ff00, transparent),
+        radial-gradient(1px 1px at 85px 25px, #ff00ff, transparent),
+        radial-gradient(2px 2px at 125px 75px, #00ffff, transparent),
+        radial-gradient(4px 4px at 165px 35px, #ff00ff, transparent);
+    animation: cosmicField 25s linear infinite;
+}
+
+@keyframes cosmicField {
+    from { 
+        transform: translateY(-100px) scale(1);
+        filter: hue-rotate(0deg);
+    }
+    to { 
+        transform: translateY(100px) scale(1.2);
+        filter: hue-rotate(360deg);
+    }
+}
+
+body.level-3 #gameContainer {
+    border-color: #ff00ff;
+    box-shadow: 
+        0 0 20px #ff00ff,
+        0 0 40px rgba(255, 0, 255, 0.3),
+        inset 0 0 20px rgba(255, 0, 255, 0.1);
+    animation: containerPulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes containerPulse {
+    from { box-shadow: 0 0 20px #ff00ff, 0 0 40px rgba(255, 0, 255, 0.3), inset 0 0 20px rgba(255, 0, 255, 0.1); }
+    to { box-shadow: 0 0 30px #ff00ff, 0 0 60px rgba(255, 0, 255, 0.5), inset 0 0 30px rgba(255, 0, 255, 0.2); }
+}
+
+body.level-3 #gameCanvas {
+    background: linear-gradient(180deg, #220033 0%, #330044 50%, #110022 100%);
+}
+
+body.level-3 .stat-group {
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+body.level-3 .label {
+    color: #ff66ff;
+}
+
+body.level-3 .health-bar {
+    border-color: #ff00ff;
+}
+
+body.level-3 .health-fill {
+    background: linear-gradient(90deg, #ff00ff 0%, #ff66ff 50%, #ff00ff 100%);
+    box-shadow: 0 0 10px #ff00ff;
+}
+
+body.level-3 .ammo-bar {
+    border-color: #00ff00;
+}
+
+body.level-3 .ammo-fill {
+    background: linear-gradient(90deg, #00ff00 0%, #66ff66 50%, #00ff00 100%);
+    box-shadow: 0 0 5px #00ff00;
+}
+
+body.level-3 #weaponType {
+    color: #00ff00;
+    text-shadow: 0 0 5px #00ff00;
+}
+
+/* Responsive Design */
+@media (max-width: 850px) {
+    #gameContainer {
+        width: 95vw;
+        height: calc(95vw * 0.75);
+        margin: 10px auto;
+    }
+    
+    #gameCanvas {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .game-title {
+        font-size: 36px;
+    }
+    
+    .ui-top {
+        padding: 10px 15px;
+    }
+    
+    .stat-group {
+        font-size: 12px;
+    }
+}

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Defender - 2D Shoot'em Up</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Game Container -->
+    <div id="gameContainer">
+        <!-- Game Canvas -->
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        
+        <!-- Game UI Overlay -->
+        <div id="gameUI">
+            <div class="ui-top">
+                <div class="stat-group">
+                    <span class="label">SCORE:</span>
+                    <span id="score">0</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">LEVEL:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat-group">
+                    <span class="label">LIVES:</span>
+                    <span id="lives">3</span>
+                </div>
+            </div>
+            
+            <!-- Health Bar -->
+            <div class="health-container">
+                <div class="health-label">HULL</div>
+                <div class="health-bar">
+                    <div id="healthFill" class="health-fill"></div>
+                </div>
+            </div>
+            
+            <!-- Weapon Info -->
+            <div class="weapon-info">
+                <span id="weaponType">PULSE CANNON</span>
+                <div class="ammo-bar">
+                    <div id="ammoFill" class="ammo-fill"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Start Screen -->
+        <div id="startScreen" class="screen-overlay">
+            <div class="screen-content">
+                <h1 class="game-title">COSMIC DEFENDER</h1>
+                <p class="game-subtitle">Defend humanity from the alien invasion</p>
+                <div class="controls-info">
+                    <p><strong>CONTROLS:</strong></p>
+                    <p>Arrow Keys - Move Ship</p>
+                    <p>Spacebar - Fire Weapons</p>
+                    <p>P - Pause Game</p>
+                </div>
+                <button id="startButton" class="game-button">START MISSION</button>
+                <div class="high-score">
+                    High Score: <span id="highScore">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Game Over Screen -->
+        <div id="gameOverScreen" class="screen-overlay hidden">
+            <div class="screen-content">
+                <h2 class="screen-title">MISSION FAILED</h2>
+                <div class="final-stats">
+                    <p>Final Score: <span id="finalScore">0</span></p>
+                    <p>Level Reached: <span id="finalLevel">1</span></p>
+                    <p id="newHighScore" class="new-high-score hidden">NEW HIGH SCORE!</p>
+                </div>
+                <button id="restartButton" class="game-button">RETRY MISSION</button>
+                <button id="menuButton" class="game-button secondary">MAIN MENU</button>
+            </div>
+        </div>
+        
+        <!-- Level Complete Screen -->
+        <div id="levelCompleteScreen" class="screen-overlay hidden">
+            <div class="screen-content">
+                <h2 class="screen-title">LEVEL COMPLETE</h2>
+                <div class="level-stats">
+                    <p>Level Score: <span id="levelScore">0</span></p>
+                    <p>Bonus Points: <span id="bonusPoints">0</span></p>
+                    <p>Accuracy: <span id="accuracy">0%</span></p>
+                </div>
+                <button id="nextLevelButton" class="game-button">NEXT LEVEL</button>
+            </div>
+        </div>
+        
+        <!-- Pause Screen -->
+        <div id="pauseScreen" class="screen-overlay hidden">
+            <div class="screen-content">
+                <h2 class="screen-title">MISSION PAUSED</h2>
+                <button id="resumeButton" class="game-button">RESUME</button>
+                <button id="pauseMenuButton" class="game-button secondary">MAIN MENU</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Instructions -->
+    <div class="instructions">
+        <p>Use arrow keys to move your ship and spacebar to fire. Collect power-ups to upgrade your weapons!</p>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
