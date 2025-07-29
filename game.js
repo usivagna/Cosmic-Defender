@@ -42,6 +42,13 @@ class Game {
         this.joystickDirection = { x: 0, y: 0 };
         this.shootButtonPressed = false;
         
+        // Swipe controls
+        this.swipeDirection = { x: 0, y: 0 };
+        this.swipeStartX = 0;
+        this.swipeStartY = 0;
+        this.swipeStartTime = 0;
+        this.isSwipeActive = false;
+        
         // Animation
         this.lastTime = 0;
         this.animationId = null;
@@ -161,69 +168,175 @@ class Game {
         document.getElementById('resumeButton').addEventListener('click', () => this.resumeGame());
         document.getElementById('pauseMenuButton').addEventListener('click', () => this.showMenu());
         
+        // Toggle mobile controls button (for testing)
+        document.getElementById('toggleMobileControls').addEventListener('click', () => {
+            this.isMobile = !this.isMobile;
+            const mobileControls = document.getElementById('mobileControls');
+            if (this.isMobile) {
+                mobileControls.classList.add('active');
+                mobileControls.style.display = 'block';
+                console.log('Mobile controls enabled');
+            } else {
+                mobileControls.classList.remove('active');
+                mobileControls.style.display = 'none';
+                console.log('Mobile controls disabled');
+            }
+        });
+        
         // Mobile controls
         this.initializeMobileControls();
     }
     
     initializeMobileControls() {
-        // Detect if device supports touch
-        this.isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        // Detect if device supports touch - more comprehensive detection
+        this.isMobile = 'ontouchstart' in window || 
+                       navigator.maxTouchPoints > 0 || 
+                       navigator.msMaxTouchPoints > 0 ||
+                       window.innerWidth <= 768;
+        
+        // Force show mobile controls for testing (you can remove this line later)
+        // this.isMobile = true;
+        
+        console.log('Mobile detected:', this.isMobile);
+        
+        const mobileControls = document.getElementById('mobileControls');
         
         if (this.isMobile) {
-            const mobileControls = document.getElementById('mobileControls');
             mobileControls.classList.add('active');
+            mobileControls.style.display = 'block';
             
-            // Virtual joystick
+            // Initialize mobile control properties
             this.joystickActive = false;
             this.joystickDirection = { x: 0, y: 0 };
+            this.shootButtonPressed = false;
+            this.swipeDirection = { x: 0, y: 0 };
             
             const joystick = document.getElementById('virtualJoystick');
             const knob = document.getElementById('joystickKnob');
+            const canvas = this.canvas;
             
-            // Touch start on joystick
-            joystick.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.joystickActive = true;
-                this.updateJoystick(e.touches[0], joystick, knob);
-            });
+            // Prevent default touch behavior on mobile controls
+            mobileControls.addEventListener('touchstart', (e) => e.preventDefault(), { passive: false });
+            mobileControls.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+            mobileControls.addEventListener('touchend', (e) => e.preventDefault(), { passive: false });
             
-            // Touch move on joystick
-            joystick.addEventListener('touchmove', (e) => {
-                e.preventDefault();
-                if (this.joystickActive) {
-                    this.updateJoystick(e.touches[0], joystick, knob);
+            // Add swipe gesture support on the canvas
+            canvas.addEventListener('touchstart', (e) => {
+                if (e.target === canvas) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    this.swipeStartX = touch.clientX;
+                    this.swipeStartY = touch.clientY;
+                    this.swipeStartTime = Date.now();
+                    this.isSwipeActive = true;
+                }
+            }, { passive: false });
+            
+            canvas.addEventListener('touchmove', (e) => {
+                if (e.target === canvas && this.isSwipeActive) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    const deltaX = touch.clientX - this.swipeStartX;
+                    const deltaY = touch.clientY - this.swipeStartY;
+                    
+                    // Normalize swipe direction for smooth movement
+                    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+                    if (distance > 10) { // Minimum swipe distance
+                        this.swipeDirection.x = Math.max(-1, Math.min(1, deltaX / 50));
+                        this.swipeDirection.y = Math.max(-1, Math.min(1, deltaY / 50));
+                    }
+                }
+            }, { passive: false });
+            
+            canvas.addEventListener('touchend', (e) => {
+                if (e.target === canvas) {
+                    e.preventDefault();
+                    this.isSwipeActive = false;
+                    // Gradually reduce swipe direction to create momentum effect
+                    const fadeOut = () => {
+                        this.swipeDirection.x *= 0.9;
+                        this.swipeDirection.y *= 0.9;
+                        if (Math.abs(this.swipeDirection.x) > 0.01 || Math.abs(this.swipeDirection.y) > 0.01) {
+                            setTimeout(fadeOut, 16); // ~60fps
+                        } else {
+                            this.swipeDirection = { x: 0, y: 0 };
+                        }
+                    };
+                    fadeOut();
                 }
             });
             
-            // Touch end on joystick
+            canvas.addEventListener('touchcancel', (e) => {
+                this.isSwipeActive = false;
+                this.swipeDirection = { x: 0, y: 0 };
+            });
+            
+            // Virtual joystick events
+            joystick.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.joystickActive = true;
+                this.updateJoystick(e.touches[0], joystick, knob);
+            }, { passive: false });
+            
+            joystick.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.joystickActive) {
+                    this.updateJoystick(e.touches[0], joystick, knob);
+                }
+            }, { passive: false });
+            
             joystick.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.joystickActive = false;
                 this.joystickDirection = { x: 0, y: 0 };
                 knob.style.transform = 'translate(-50%, -50%)';
             });
             
-            // Shoot button
+            // Also handle touchcancel
+            joystick.addEventListener('touchcancel', (e) => {
+                this.joystickActive = false;
+                this.joystickDirection = { x: 0, y: 0 };
+                knob.style.transform = 'translate(-50%, -50%)';
+            });
+            
+            // Shoot button events
             const shootButton = document.getElementById('shootButton');
-            this.shootButtonPressed = false;
             
             shootButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.shootButtonPressed = true;
-            });
+                shootButton.style.backgroundColor = 'rgba(255, 150, 150, 1)';
+            }, { passive: false });
             
             shootButton.addEventListener('touchend', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 this.shootButtonPressed = false;
+                shootButton.style.backgroundColor = 'rgba(255, 100, 100, 0.8)';
+            });
+            
+            shootButton.addEventListener('touchcancel', (e) => {
+                this.shootButtonPressed = false;
+                shootButton.style.backgroundColor = 'rgba(255, 100, 100, 0.8)';
             });
             
             // Mobile pause button
-            document.getElementById('mobilePauseButton').addEventListener('touchstart', (e) => {
+            const pauseButton = document.getElementById('mobilePauseButton');
+            pauseButton.addEventListener('touchstart', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 if (this.state === 'playing') {
                     this.pauseGame();
                 }
-            });
+            }, { passive: false });
+            
+            console.log('Mobile controls initialized');
+        } else {
+            mobileControls.style.display = 'none';
         }
     }
     
@@ -781,11 +894,27 @@ class Player {
     
     update(deltaTime, keys, game) {
         // Handle mobile controls
-        if (game.isMobile && game.joystickDirection) {
-            // Mobile movement using virtual joystick
-            const sensitivity = 0.7;
-            this.x += game.joystickDirection.x * this.speed * sensitivity;
-            this.y += game.joystickDirection.y * this.speed * sensitivity;
+        if (game.isMobile) {
+            // Combine joystick and swipe input for movement
+            let mobileX = 0;
+            let mobileY = 0;
+            
+            // Joystick input (when touching the joystick)
+            if (game.joystickActive && game.joystickDirection) {
+                mobileX += game.joystickDirection.x;
+                mobileY += game.joystickDirection.y;
+            }
+            
+            // Swipe input (when swiping on canvas)
+            if (game.swipeDirection) {
+                mobileX += game.swipeDirection.x;
+                mobileY += game.swipeDirection.y;
+            }
+            
+            // Apply movement with sensitivity
+            const sensitivity = 0.8;
+            this.x += mobileX * this.speed * sensitivity;
+            this.y += mobileY * this.speed * sensitivity;
         } else {
             // Keyboard movement
             if (keys['ArrowLeft'] || keys['KeyA']) {

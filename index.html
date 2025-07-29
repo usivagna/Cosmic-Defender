@@ -2,7 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000033">
     <title>Cosmic Defender - 2D Shoot'em Up</title>
     <link rel="stylesheet" href="styles.css">
 </head>
@@ -104,8 +108,10 @@
     <!-- Instructions -->
     <div class="instructions">
         <p><strong>Desktop:</strong> Use arrow keys to move your ship and spacebar to fire.</p>
-        <p><strong>Mobile:</strong> Use the virtual joystick to move and the FIRE button to shoot.</p>
+        <p><strong>Mobile:</strong> Use the virtual joystick OR swipe on the game screen to move. Tap the FIRE button to shoot.</p>
+        <p><strong>Pro Tip:</strong> On mobile, you can use both controls simultaneously for precise movement!</p>
         <p>Collect power-ups to upgrade your weapons!</p>
+        <button id="toggleMobileControls" style="margin-top: 10px; padding: 5px 10px; background: #00ffff; color: #000; border: none; border-radius: 5px; cursor: pointer;">Toggle Mobile Controls (for testing)</button>
     </div>
 
     <!-- Mobile Controls -->
