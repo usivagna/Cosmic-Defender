@@ -202,8 +202,9 @@ class Game {
         const mobileControls = document.getElementById('mobileControls');
         
         if (this.isMobile) {
-            mobileControls.classList.add('active');
-            mobileControls.style.display = 'block';
+            // Don't show mobile controls immediately - only during gameplay
+            // mobileControls.classList.add('active');
+            // mobileControls.style.display = 'block';
             
             // Initialize mobile control properties
             this.joystickActive = false;
@@ -365,7 +366,6 @@ class Game {
             this.joystickDirection.y = constrainedY / maxDistance;
         }
     }
-    }
     
     initializeUI() {
         document.getElementById('highScore').textContent = this.highScore;
@@ -402,6 +402,13 @@ class Game {
         document.getElementById('startScreen').classList.add('hidden');
         document.getElementById('gameOverScreen').classList.add('hidden');
         document.getElementById('levelCompleteScreen').classList.add('hidden');
+        
+        // Show mobile controls during gameplay if on mobile device
+        if (this.isMobile) {
+            const mobileControls = document.getElementById('mobileControls');
+            mobileControls.classList.add('active');
+            mobileControls.style.display = 'block';
+        }
         
         // Set level theme
         this.setLevelTheme(this.currentLevel);
@@ -444,6 +451,11 @@ class Game {
         if (this.animationId) {
             cancelAnimationFrame(this.animationId);
         }
+        
+        // Hide mobile controls when returning to menu
+        const mobileControls = document.getElementById('mobileControls');
+        mobileControls.classList.remove('active');
+        mobileControls.style.display = 'none';
         
         // Hide all screens
         document.getElementById('gameOverScreen').classList.add('hidden');
@@ -967,10 +979,10 @@ class Player {
         this.ammo -= 10;
         game.shotsFired++;
         
-        // Create bullet
+        // Create bullet - start from the front of the ship (top edge)
         const bullet = new Bullet(
             this.x + this.width / 2 - 2,
-            this.y,
+            this.y - 5, // Start 5 pixels above the ship to appear at the front
             0, -8, // velocity
             'player',
             25
