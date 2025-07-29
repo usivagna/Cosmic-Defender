@@ -36,6 +36,12 @@ class Game {
         this.keys = {};
         this.lastShotTime = 0;
         
+        // Mobile controls
+        this.isMobile = false;
+        this.joystickActive = false;
+        this.joystickDirection = { x: 0, y: 0 };
+        this.shootButtonPressed = false;
+        
         // Animation
         this.lastTime = 0;
         this.animationId = null;
@@ -154,6 +160,98 @@ class Game {
         document.getElementById('nextLevelButton').addEventListener('click', () => this.nextLevel());
         document.getElementById('resumeButton').addEventListener('click', () => this.resumeGame());
         document.getElementById('pauseMenuButton').addEventListener('click', () => this.showMenu());
+        
+        // Mobile controls
+        this.initializeMobileControls();
+    }
+    
+    initializeMobileControls() {
+        // Detect if device supports touch
+        this.isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if (this.isMobile) {
+            const mobileControls = document.getElementById('mobileControls');
+            mobileControls.classList.add('active');
+            
+            // Virtual joystick
+            this.joystickActive = false;
+            this.joystickDirection = { x: 0, y: 0 };
+            
+            const joystick = document.getElementById('virtualJoystick');
+            const knob = document.getElementById('joystickKnob');
+            
+            // Touch start on joystick
+            joystick.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.joystickActive = true;
+                this.updateJoystick(e.touches[0], joystick, knob);
+            });
+            
+            // Touch move on joystick
+            joystick.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (this.joystickActive) {
+                    this.updateJoystick(e.touches[0], joystick, knob);
+                }
+            });
+            
+            // Touch end on joystick
+            joystick.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.joystickActive = false;
+                this.joystickDirection = { x: 0, y: 0 };
+                knob.style.transform = 'translate(-50%, -50%)';
+            });
+            
+            // Shoot button
+            const shootButton = document.getElementById('shootButton');
+            this.shootButtonPressed = false;
+            
+            shootButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                this.shootButtonPressed = true;
+            });
+            
+            shootButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                this.shootButtonPressed = false;
+            });
+            
+            // Mobile pause button
+            document.getElementById('mobilePauseButton').addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (this.state === 'playing') {
+                    this.pauseGame();
+                }
+            });
+        }
+    }
+    
+    updateJoystick(touch, joystick, knob) {
+        const rect = joystick.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        const deltaX = touch.clientX - centerX;
+        const deltaY = touch.clientY - centerY;
+        
+        const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+        const maxDistance = rect.width / 2 - 20;
+        
+        if (distance <= maxDistance) {
+            knob.style.transform = `translate(${deltaX - 20}px, ${deltaY - 20}px)`;
+            this.joystickDirection.x = deltaX / maxDistance;
+            this.joystickDirection.y = deltaY / maxDistance;
+        } else {
+            const angle = Math.atan2(deltaY, deltaX);
+            const constrainedX = Math.cos(angle) * maxDistance;
+            const constrainedY = Math.sin(angle) * maxDistance;
+            
+            knob.style.transform = `translate(${constrainedX - 20}px, ${constrainedY - 20}px)`;
+            this.joystickDirection.x = constrainedX / maxDistance;
+            this.joystickDirection.y = constrainedY / maxDistance;
+        }
+    }
     }
     
     initializeUI() {
@@ -682,22 +780,37 @@ class Player {
     }
     
     update(deltaTime, keys, game) {
-        // Movement
-        if (keys['ArrowLeft'] || keys['KeyA']) {
-            this.x = Math.max(0, this.x - this.speed);
-        }
-        if (keys['ArrowRight'] || keys['KeyD']) {
-            this.x = Math.min(game.width - this.width, this.x + this.speed);
-        }
-        if (keys['ArrowUp'] || keys['KeyW']) {
-            this.y = Math.max(0, this.y - this.speed);
-        }
-        if (keys['ArrowDown'] || keys['KeyS']) {
-            this.y = Math.min(game.height - this.height, this.y + this.speed);
+        // Handle mobile controls
+        if (game.isMobile && game.joystickDirection) {
+            // Mobile movement using virtual joystick
+            const sensitivity = 0.7;
+            this.x += game.joystickDirection.x * this.speed * sensitivity;
+            this.y += game.joystickDirection.y * this.speed * sensitivity;
+        } else {
+            // Keyboard movement
+            if (keys['ArrowLeft'] || keys['KeyA']) {
+                this.x = Math.max(0, this.x - this.speed);
+            }
+            if (keys['ArrowRight'] || keys['KeyD']) {
+                this.x = Math.min(game.width - this.width, this.x + this.speed);
+            }
+            if (keys['ArrowUp'] || keys['KeyW']) {
+                this.y = Math.max(0, this.y - this.speed);
+            }
+            if (keys['ArrowDown'] || keys['KeyS']) {
+                this.y = Math.min(game.height - this.height, this.y + this.speed);
+            }
         }
         
-        // Shooting
-        if (keys['Space'] && this.canShoot()) {
+        // Keep player within bounds
+        this.x = Math.max(0, Math.min(game.width - this.width, this.x));
+        this.y = Math.max(0, Math.min(game.height - this.height, this.y));
+        
+        // Shooting - handle both keyboard and mobile
+        const shouldShoot = (keys['Space'] && this.canShoot()) || 
+                           (game.isMobile && game.shootButtonPressed && this.canShoot());
+        
+        if (shouldShoot) {
             this.shoot(game);
         }
         

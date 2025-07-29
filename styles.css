@@ -494,3 +494,140 @@ body.level-3 #weaponType {
         font-size: 12px;
     }
 }
+
+/* Mobile Controls */
+.mobile-controls {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 200px;
+    display: none;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.mobile-controls.active {
+    display: block;
+    pointer-events: all;
+}
+
+.virtual-joystick {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 120px;
+    height: 120px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(0, 255, 255, 0.5);
+    border-radius: 50%;
+    touch-action: none;
+}
+
+.joystick-knob {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 255, 255, 0.8);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: all 0.1s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.6);
+}
+
+.shoot-button {
+    position: absolute;
+    bottom: 40px;
+    right: 40px;
+    width: 80px;
+    height: 80px;
+    background: rgba(255, 100, 100, 0.8);
+    border: 3px solid rgba(255, 255, 255, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+    touch-action: none;
+    user-select: none;
+}
+
+.shoot-button:active {
+    background: rgba(255, 150, 150, 1);
+    transform: scale(0.95);
+}
+
+.pause-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: white;
+    touch-action: none;
+    user-select: none;
+}
+
+/* Mobile device detection */
+@media (hover: none) and (pointer: coarse) {
+    .mobile-controls {
+        display: block;
+        pointer-events: all;
+    }
+    
+    #gameContainer {
+        width: 100vw;
+        height: calc(100vh - 220px);
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    #gameCanvas {
+        border-radius: 0;
+    }
+    
+    .container {
+        padding: 0;
+    }
+    
+    .ui-top {
+        padding: 5px 10px;
+        font-size: 10px;
+    }
+    
+    .stat-group {
+        font-size: 10px;
+    }
+    
+    .screen {
+        padding: 15px;
+    }
+    
+    .screen-title {
+        font-size: 24px;
+    }
+    
+    .button {
+        padding: 8px 16px;
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-controls {
+        display: block;
+        pointer-events: all;
+    }
+}

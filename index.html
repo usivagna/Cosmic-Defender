@@ -103,7 +103,18 @@
     
     <!-- Instructions -->
     <div class="instructions">
-        <p>Use arrow keys to move your ship and spacebar to fire. Collect power-ups to upgrade your weapons!</p>
+        <p><strong>Desktop:</strong> Use arrow keys to move your ship and spacebar to fire.</p>
+        <p><strong>Mobile:</strong> Use the virtual joystick to move and the FIRE button to shoot.</p>
+        <p>Collect power-ups to upgrade your weapons!</p>
+    </div>
+
+    <!-- Mobile Controls -->
+    <div class="mobile-controls" id="mobileControls">
+        <div class="virtual-joystick" id="virtualJoystick">
+            <div class="joystick-knob" id="joystickKnob"></div>
+        </div>
+        <div class="shoot-button" id="shootButton">FIRE</div>
+        <div class="pause-button" id="mobilePauseButton">⏸</div>
     </div>
 
     <script src="game.js"></script>
