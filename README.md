@@ -2,6 +2,9 @@
 
 A retro-style 2D arcade shoot'em up game built with pure HTML5, CSS3, and JavaScript. Navigate your spaceship through three challenging levels, defeat enemies, collect power-ups, and save the galaxy!
 
+## 🎮 [**PLAY NOW**](https://yourusername.github.io/cosmic-defender/) 
+> ⚡ **Live Demo** - Click to play instantly in your browser!
+
 ![Game Preview](https://img.shields.io/badge/Game-Playable-brightgreen)
 ![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
